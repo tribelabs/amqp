@@ -1,5 +1,4 @@
 var amqp = require('amqplib')
-var Promise = require('bluebird')
 
 var middleware = require('./middleware.js')
 var publish = require('./lib/publish.js')
