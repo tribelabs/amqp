@@ -1,14 +1,23 @@
+var defaults = {
+  prefetch: false
+}
+
 module.exports = (createChannel, debug) => {
-  return (queue, callback) => {
+  return (queue, callback, opts) => {
     debug('Add consumer for', queue)
+    opts = Object.assign({}, defaults, opts)
 
     return new Promise((resolve, reject) => {
       createChannel(queue)
       .then((channel) => {
-        return channel.prefetch(1)
-        .then(() => {
-          return channel
-        })
+        if (opts.prefetch === true) {
+          return channel.prefetch(1)
+          .then(() => {
+            return channel
+          })
+        }
+
+        return channel
       })
       .then((channel) => {
         return channel.consume(queue, (msg) => {
