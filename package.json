@@ -6,6 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "dependencies": {
+    "amqplib": "^0.4.1",
+    "node-uuid": "^1.4.7"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tribelabs/amqp.git"
