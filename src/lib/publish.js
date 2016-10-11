@@ -4,7 +4,7 @@ module.exports = (createChannel, debug) => {
   return function (queue, message, callback) {
     var listenForReply = typeof callback === 'function'
 
-    debug('should be published', queue, message)
+    debug('Should be published', queue, message)
 
     return new Promise(function (resolve, reject) {
       createChannel(queue)
@@ -45,7 +45,7 @@ module.exports = (createChannel, debug) => {
         }
       })
       .then((results) => {
-        debug('publish', queue, message)
+        debug('Publish', queue, message)
         return results.channel.sendToQueue(queue, new Buffer(JSON.stringify(message)), {
           correlationId: results.correlationId,
           replyTo: results.replyTo

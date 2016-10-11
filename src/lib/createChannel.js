@@ -5,7 +5,7 @@ module.exports = (storage, connect, debug) => {
     }
 
     if (!storage[queue]) {
-      debug('create channel for', queue)
+      debug('Create channel for', queue)
       storage[queue] = new Promise((resolve, reject) => {
         connect()
         .then(function (conn) {

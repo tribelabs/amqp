@@ -9,10 +9,9 @@ var _config = null
 
 var connection = null
 var connect = () => {
-  debug('connect to rabbit with config', _config)
   if (!connection) {
     connection = new Promise((resolve, reject) => {
-      debug('create new rabbit connection')
+      debug('Create new rabbit connection', _config)
       resolve(amqp.connect(_config.connection))
     })
   }
