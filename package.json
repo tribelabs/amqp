@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/tribelabs/amqp/issues"
   },
-  "homepage": "https://github.com/tribelabs/amqp#readme"
+  "homepage": "https://github.com/tribelabs/amqp#readme",
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org/"
+  }
 }
