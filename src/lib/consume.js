@@ -1,3 +1,5 @@
+var uid = require('node-uuid')
+
 var defaults = {
   prefetch: false
 }
@@ -26,6 +28,12 @@ module.exports = (createChannel, debug) => {
             return
           }
 
+          var timeLabel = null
+          if (debug.isAllowed()) {
+            timeLabel = queue + '_' + uid()
+            console.time(timeLabel)
+          }
+
           var result = null
           try {
             result = callback(JSON.parse(msg.content ? msg.content.toString() : msg.toString()))
@@ -46,6 +54,10 @@ module.exports = (createChannel, debug) => {
 
           result
           .then((message) => {
+            if (timeLabel) {
+              console.timeEnd(timeLabel)
+            }
+
             debug('Task', queue, 'finished, with message', message)
 
             if (msg.properties && msg.properties.replyTo) {
