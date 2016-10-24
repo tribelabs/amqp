@@ -28,6 +28,10 @@ var debug = function () {
   }
 }
 
+debug.isAllowed = () => {
+  return (_config || {}).debug
+}
+
 var service = {
   publish: publish(createChannel(publishers, connect, debug), debug),
   consume: consume(createChannel(consumers, connect, debug), debug)
