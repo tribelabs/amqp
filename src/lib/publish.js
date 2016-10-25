@@ -1,38 +1,50 @@
 var uuid = require('node-uuid')
 
-var maybeAnswer = (channel, corrId, callback) => {
-  return (msg) => {
-    if (msg.properties.correlationId === corrId) {
-      callback(JSON.parse(msg.content.toString()))
-      channel.ack(msg)
-    }
-  }
+var defaults = {
+  autoDeleteCallback: false
 }
 
 module.exports = (createChannel, debug) => {
-  return function (queue, message, callback) {
+  var maybeAnswer = (channel, corrId, callback, autoDelete) => {
+    return (msg) => {
+      if (msg.properties.correlationId === corrId) {
+        callback(JSON.parse(msg.content.toString()))
+        channel.ack(msg)
+
+        if (autoDelete === true) {
+          debug('Cancel channel consumer', msg.fields.consumerTag)
+          channel.cancel(msg.fields.consumerTag)
+        }
+      }
+    }
+  }
+
+  return function (queue, message, callback, opts) {
+    opts = Object.assign({}, defaults, (opts || {}))
     var listenForReply = typeof callback === 'function'
 
-    debug('Should be published', queue, message)
+    debug('Should be published', queue, message, opts)
 
     return new Promise(function (resolve, reject) {
       createChannel(queue)
       .then((channel) => {
         if (listenForReply) {
           return channel.assertQueue('', {
-            exclusive: true
+            exclusive: true,
+            autoDelete: true
           })
           .then((r) => {
             return r.queue
           })
-          .then((consumer) => {
+          .then((queueName) => {
             var corrId = uuid()
+            var consumer = maybeAnswer(channel, corrId, callback, opts.autoDeleteCallback)
 
-            return channel.consume(consumer, maybeAnswer(channel, corrId, callback))
+            return channel.consume(queueName, consumer)
             .then(() => {
               return {
                 channel: channel,
-                replyTo: consumer,
+                replyTo: queueName,
                 correlationId: corrId
               }
             })
