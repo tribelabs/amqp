@@ -1,5 +1,14 @@
 var uuid = require('node-uuid')
 
+var maybeAnswer = (channel, corrId, callback) => {
+  return (msg) => {
+    if (msg.properties.correlationId === corrId) {
+      callback(JSON.parse(msg.content.toString()))
+      channel.ack(msg)
+    }
+  }
+}
+
 module.exports = (createChannel, debug) => {
   return function (queue, message, callback) {
     var listenForReply = typeof callback === 'function'
@@ -10,14 +19,6 @@ module.exports = (createChannel, debug) => {
       createChannel(queue)
       .then((channel) => {
         if (listenForReply) {
-          var corrId = uuid()
-          var maybeAnswer = (msg) => {
-            if (msg.properties.correlationId === corrId) {
-              callback(JSON.parse(msg.content.toString()))
-              channel.ack(msg)
-            }
-          }
-
           return channel.assertQueue('', {
             exclusive: true
           })
@@ -25,7 +26,9 @@ module.exports = (createChannel, debug) => {
             return r.queue
           })
           .then((consumer) => {
-            return channel.consume(consumer, maybeAnswer)
+            var corrId = uuid()
+
+            return channel.consume(consumer, maybeAnswer(channel, corrId, callback))
             .then(() => {
               return {
                 channel: channel,
