@@ -14,7 +14,7 @@ module.exports = (createChannel, debug) => {
           var maybeAnswer = (msg) => {
             if (msg.properties.correlationId === corrId) {
               callback(JSON.parse(msg.content.toString()))
-              // channel.ack(msg)
+              channel.ack(msg)
             }
           }
 
@@ -25,9 +25,7 @@ module.exports = (createChannel, debug) => {
             return r.queue
           })
           .then((consumer) => {
-            return channel.consume(consumer, maybeAnswer, {
-              noAct: true
-            })
+            return channel.consume(consumer, maybeAnswer)
             .then(() => {
               return {
                 channel: channel,
