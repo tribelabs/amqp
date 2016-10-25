@@ -30,8 +30,8 @@ module.exports = (createChannel, debug) => {
       .then((channel) => {
         if (listenForReply) {
           return channel.assertQueue('', {
-            exclusive: true,
-            autoDelete: true
+            exclusive: true, // do not allow others to use this queue
+            autoDelete: true // the queue will be deleted when the number of consumers drops to zero
           })
           .then((r) => {
             return r.queue
