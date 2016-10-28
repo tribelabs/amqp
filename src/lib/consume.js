@@ -12,8 +12,10 @@ module.exports = (createChannel, debug) => {
     return new Promise((resolve, reject) => {
       createChannel(queue)
       .then((channel) => {
-        if (opts.prefetch === true) {
-          return channel.prefetch(1)
+        if (opts.prefetch === true || typeof opts.prefetch === 'number') {
+          var prefetch = opts.prefetch === true ? 1 : Number(opts.prefetch)
+          debug('Prefetch channel', queue, 'with', prefetch)
+          return channel.prefetch(prefetch)
           .then(() => {
             return channel
           })
