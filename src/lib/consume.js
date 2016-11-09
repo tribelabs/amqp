@@ -1,5 +1,3 @@
-var uid = require('node-uuid')
-
 var defaults = {
   prefetch: false
 }
@@ -32,7 +30,7 @@ module.exports = (createChannel, debug) => {
 
           var timeLabel = null
           if (debug.isAllowed()) {
-            timeLabel = queue + '_' + uid()
+            timeLabel = queue + '_' + (msg.properties || {}).correlationId
             console.time(timeLabel)
           }
 
