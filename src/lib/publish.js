@@ -29,7 +29,6 @@ module.exports = (createChannel, debug) => {
       createChannel(queue)
       .then((channel) => {
         var corrId = uuid()
-        var timestamp = Date.now()
 
         if (listenForReply) {
           return channel.assertQueue('', {
@@ -44,8 +43,7 @@ module.exports = (createChannel, debug) => {
               return {
                 channel: channel,
                 replyTo: replyChannel.queue,
-                correlationId: corrId,
-                created: timestamp
+                correlationId: corrId
               }
             })
           })
@@ -54,15 +52,15 @@ module.exports = (createChannel, debug) => {
         return {
           channel: channel,
           replyTo: null,
-          correlationId: corrId,
-          created: timestamp
+          correlationId: corrId
         }
       })
       .then((results) => {
         debug('Publish', queue, message)
         return results.channel.sendToQueue(queue, new Buffer(JSON.stringify(message)), {
           correlationId: results.correlationId,
-          replyTo: results.replyTo
+          replyTo: results.replyTo,
+          timestamp: Date.now()
         })
       })
       .then(resolve)

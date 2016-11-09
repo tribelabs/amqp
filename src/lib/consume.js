@@ -60,7 +60,7 @@ module.exports = (createChannel, debug) => {
               console.timeEnd(timeLabel)
             }
 
-            debug('Task', queue, 'finished, with message', message, 'took:', Date.now() - properties.created)
+            debug('Task', queue, 'finished, with message', message, 'took:', (Date.now() - properties.timestamp) / 1000)
 
             if (properties.replyTo) {
               debug('Send reply', properties.replyTo, properties.correlationId)
