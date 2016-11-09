@@ -2,6 +2,8 @@ var defaults = {
   prefetch: false
 }
 
+var counter = 0
+
 module.exports = (createChannel, debug) => {
   return (queue, callback, opts) => {
     debug('Add consumer for', queue)
@@ -32,7 +34,7 @@ module.exports = (createChannel, debug) => {
           var timeLabel = null
 
           if (debug.isAllowed()) {
-            timeLabel = queue + '_' + properties.correlationId
+            timeLabel = queue + '_' + properties.correlationId || counter++
             console.time(timeLabel)
           }
 
