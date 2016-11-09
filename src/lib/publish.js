@@ -28,6 +28,8 @@ module.exports = (createChannel, debug) => {
     return new Promise(function (resolve, reject) {
       createChannel(queue)
       .then((channel) => {
+        var corrId = uuid()
+
         if (listenForReply) {
           return channel.assertQueue('', {
             exclusive: true, // do not allow others to use this queue
@@ -37,7 +39,6 @@ module.exports = (createChannel, debug) => {
             return r.queue
           })
           .then((queueName) => {
-            var corrId = uuid()
             var consumer = maybeAnswer(channel, corrId, callback, opts.autoDeleteCallback)
 
             return channel.consume(queueName, consumer)
@@ -54,7 +55,7 @@ module.exports = (createChannel, debug) => {
         return {
           channel: channel,
           replyTo: null,
-          correlationId: null
+          correlationId: corrId
         }
       })
       .then((results) => {
