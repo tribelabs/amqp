@@ -36,17 +36,14 @@ module.exports = (createChannel, debug) => {
             exclusive: true, // do not allow others to use this queue
             autoDelete: true // the queue will be deleted when the number of consumers drops to zero
           })
-          .then((r) => {
-            return r.queue
-          })
-          .then((queueName) => {
+          .then((replyChannel) => {
             var consumer = maybeAnswer(channel, corrId, callback, opts.autoDeleteCallback)
 
-            return channel.consume(queueName, consumer)
+            return channel.consume(replyChannel.queue, consumer)
             .then(() => {
               return {
                 channel: channel,
-                replyTo: queueName,
+                replyTo: replyChannel.queue,
                 correlationId: corrId,
                 created: timestamp
               }
