@@ -28,9 +28,11 @@ module.exports = (createChannel, debug) => {
             return
           }
 
+          var properties = msg.properties || {}
           var timeLabel = null
+
           if (debug.isAllowed()) {
-            timeLabel = queue + '_' + (msg.properties || {}).correlationId
+            timeLabel = queue + '_' + properties.correlationId
             console.time(timeLabel)
           }
 
@@ -58,12 +60,12 @@ module.exports = (createChannel, debug) => {
               console.timeEnd(timeLabel)
             }
 
-            debug('Task', queue, 'finished, with message', message)
+            debug('Task', queue, 'finished, with message', message, 'took:', Date.now() - properties.created)
 
-            if (msg.properties && msg.properties.replyTo) {
-              debug('Send reply', msg.properties.replyTo, msg.properties.correlationId)
-              channel.sendToQueue(msg.properties.replyTo, new Buffer(JSON.stringify(message)), {
-                correlationId: msg.properties.correlationId
+            if (properties.replyTo) {
+              debug('Send reply', properties.replyTo, properties.correlationId)
+              channel.sendToQueue(properties.replyTo, new Buffer(JSON.stringify(message)), {
+                correlationId: properties.correlationId
               })
             }
 
