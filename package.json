@@ -1,6 +1,6 @@
 {
   "name": "tribe-amqp",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Helpers for working with amqp",
   "main": "src/index.js",
   "scripts": {
