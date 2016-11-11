@@ -34,7 +34,7 @@ module.exports = (createChannel, debug) => {
           var timeLabel = null
 
           if (debug.isAllowed()) {
-            timeLabel = queue + '_' + properties.correlationId || counter++
+            timeLabel = queue + '_' + (properties.correlationId || counter++)
             console.time(timeLabel)
           }
 
