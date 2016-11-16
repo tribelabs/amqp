@@ -20,9 +20,9 @@ var connect = () => {
           emitListeners(onClose, [model])
         })
 
-        model.on('error', () => {
+        model.on('error', (error) => {
           debug('"Error" event emitted, emitting callbacks:', onError.length)
-          emitListeners(onError, [model])
+          emitListeners(onError, [error, model])
         })
 
         resolve(model)
