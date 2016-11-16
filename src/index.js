@@ -12,7 +12,27 @@ var connect = () => {
   if (!connection) {
     connection = new Promise((resolve, reject) => {
       debug('Create new rabbit connection', _config)
-      resolve(amqp.connect(_config.connection))
+
+      amqp.connect(_config.connection)
+      .then((model) => {
+        model.on('close', () => {
+          debug('"Close" event emitted, emitting callbacks:', onClose.length)
+
+          onClose.map((callback) => {
+            callback(model)
+          })
+        })
+
+        resolve(model)
+      })
+      .catch((error) => {
+        console.warn('AMQP connect failed', error)
+        if (error && error.stack) {
+          console.log(error.stack)
+        }
+
+        reject(error)
+      })
     })
   }
 
@@ -32,7 +52,16 @@ debug.isAllowed = () => {
   return (_config || {}).debug
 }
 
+var onClose = []
+
 var service = {
+  onClose: (callback) => {
+    if (typeof callback !== 'function') {
+      throw new Error('Callback has to be function')
+    }
+
+    onClose.push(callback)
+  },
   publish: publish(createChannel(publishers, connect, debug), debug),
   consume: consume(createChannel(consumers, connect, debug), debug)
 }
