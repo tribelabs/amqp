@@ -17,10 +17,12 @@ var connect = () => {
       .then((model) => {
         model.on('close', () => {
           debug('"Close" event emitted, emitting callbacks:', onClose.length)
+          emitListeners(onClose, [model])
+        })
 
-          onClose.map((callback) => {
-            callback(model)
-          })
+        model.on('error', () => {
+          debug('"Error" event emitted, emitting callbacks:', onError.length)
+          emitListeners(onError, [model])
         })
 
         resolve(model)
@@ -53,15 +55,31 @@ debug.isAllowed = () => {
 }
 
 var onClose = []
+var onError = []
 
-var service = {
-  onClose: (callback) => {
+var addListener = (storage) => {
+  if (!Array.isArray(storage)) {
+    throw new Error('Listeners storage has to be array')
+  }
+
+  return (callback) => {
     if (typeof callback !== 'function') {
       throw new Error('Callback has to be function')
     }
 
-    onClose.push(callback)
-  },
+    storage.push(callback)
+  }
+}
+
+var emitListeners = (callbacks, args) => {
+  callbacks.map((callback) => {
+    callback.apply(callback, args)
+  })
+}
+
+var service = {
+  onClose: addListener(onClose),
+  onError: addListener(onError),
   publish: publish(createChannel(publishers, connect, debug), debug),
   consume: consume(createChannel(consumers, connect, debug), debug)
 }
