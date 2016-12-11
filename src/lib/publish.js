@@ -60,7 +60,7 @@ module.exports = (createChannel, debug) => {
         debug('Publish', queue, message)
 
         if (isNil(message)) {
-          message = new Buffer('')
+          message = new Buffer(JSON.stringify({}))
         } else {
           message = new Buffer(JSON.stringify(message))
         }
