@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "amqplib": "^0.4.1",
+    "is-nil": "1.0.1",
     "node-uuid": "^1.4.7"
   },
   "repository": {

@@ -1,4 +1,5 @@
 var uuid = require('node-uuid')
+var isNil = require('is-nil')
 
 var defaults = {
   autoDeleteCallback: false
@@ -57,7 +58,14 @@ module.exports = (createChannel, debug) => {
       })
       .then((results) => {
         debug('Publish', queue, message)
-        return results.channel.sendToQueue(queue, new Buffer(JSON.stringify(message)), {
+
+        if (isNil(message)) {
+          message = new Buffer('')
+        } else {
+          message = new Buffer(JSON.stringify(message))
+        }
+
+        return results.channel.sendToQueue(queue, message, {
           correlationId: results.correlationId,
           replyTo: results.replyTo,
           timestamp: Date.now()
