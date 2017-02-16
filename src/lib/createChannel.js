@@ -11,9 +11,11 @@ module.exports = (storage, connect, debug) => {
       throw new Error('Missing queue name')
     }
 
-    if (!storage[queue]) {
+    var channel = storage(queue)
+
+    if (!channel) {
       debug('Create channel for', queue)
-      storage[queue] = new Promise((resolve, reject) => {
+      channel = new Promise((resolve, reject) => {
         createRawChannel()
         .then((channel) => {
           return channel.assertQueue(queue)
@@ -28,9 +30,11 @@ module.exports = (storage, connect, debug) => {
           reject(error)
         })
       })
+
+      storage.set(channel)
     }
 
-    return storage[queue]
+    return channel
   }
 
   return createChannel

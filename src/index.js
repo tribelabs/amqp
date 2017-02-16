@@ -3,6 +3,7 @@ var amqp = require('amqplib')
 var middleware = require('./middleware.js')
 var publish = require('./lib/publish.js')
 var consume = require('./lib/consume.js')
+var storage = require('./lib/storage.js')
 var createChannel = require('./lib/createChannel.js')
 
 var _config = null
@@ -41,9 +42,6 @@ var connect = () => {
   return connection
 }
 
-var publishers = {}
-var consumers = {}
-
 var debug = function () {
   if (_config.debug === true) {
     console.log.apply(null, arguments)
@@ -80,8 +78,8 @@ var emitListeners = (callbacks, args) => {
 var service = {
   onClose: addListener(onClose),
   onError: addListener(onError),
-  publish: publish(createChannel(publishers, connect, debug), debug),
-  consume: consume(createChannel(consumers, connect, debug), debug)
+  publish: publish(createChannel(storage.namespace('publishers'), connect, debug), debug),
+  consume: consume(createChannel(storage.namespace('consumers'), connect, debug), debug)
 }
 
 var rabbit = (config) => {
