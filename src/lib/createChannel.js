@@ -1,5 +1,12 @@
 module.exports = (storage, connect, debug) => {
-  var createChannel = function (queue) {
+  var createRawChannel = () => {
+    return connect()
+    .then((conn) => {
+      return conn.createChannel()
+    })
+  }
+
+  var createChannel = (queue) => {
     if (!queue) {
       throw new Error('Missing queue name')
     }
@@ -7,11 +14,8 @@ module.exports = (storage, connect, debug) => {
     if (!storage[queue]) {
       debug('Create channel for', queue)
       storage[queue] = new Promise((resolve, reject) => {
-        connect()
-        .then(function (conn) {
-          return conn.createChannel()
-        })
-        .then(function (channel) {
+        createRawChannel()
+        .then((channel) => {
           return channel.assertQueue(queue)
           .then(() => {
             return channel
@@ -20,7 +24,7 @@ module.exports = (storage, connect, debug) => {
         .then((channel) => {
           resolve(channel)
         })
-        .catch(function (error) {
+        .catch((error) => {
           reject(error)
         })
       })
