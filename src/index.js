@@ -4,7 +4,7 @@ var middleware = require('./middleware.js')
 var publish = require('./lib/publish.js')
 var consume = require('./lib/consume.js')
 var storage = require('./lib/storage.js')
-var createChannel = require('./lib/createChannel.js')
+var createQueue = require('./lib/createQueue.js')
 
 var _config = null
 
@@ -78,8 +78,8 @@ var emitListeners = (callbacks, args) => {
 var service = {
   onClose: addListener(onClose),
   onError: addListener(onError),
-  publish: publish(createChannel(storage.namespace('publishers'), connect, debug), debug),
-  consume: consume(createChannel(storage.namespace('consumers'), connect, debug), debug)
+  publish: publish(createQueue(storage.namespace('publishers'), connect, debug), debug),
+  consume: consume(createQueue(storage.namespace('consumers'), connect, debug), debug)
 }
 
 var rabbit = (config) => {
