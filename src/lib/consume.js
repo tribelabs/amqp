@@ -1,8 +1,9 @@
+var createCallback = require('./consumer/createCallback.js')
+var prefetch = require('./channel/prefetch.js')
+
 var defaults = {
   prefetch: false
 }
-
-var createCallback = require('./consumer/createCallback.js')
 
 module.exports = (createQueue, debug) => {
   return (queue, callback, opts) => {
@@ -13,12 +14,7 @@ module.exports = (createQueue, debug) => {
       createQueue(queue)
       .then((channel) => {
         if (opts.prefetch === true || typeof opts.prefetch === 'number') {
-          var prefetch = opts.prefetch === true ? 1 : Number(opts.prefetch)
-          debug('Prefetch channel', queue, 'with', prefetch)
-          return channel.prefetch(prefetch)
-          .then(() => {
-            return channel
-          })
+          return prefetch(debug)(channel, opts.prefetch)
         }
 
         return channel
