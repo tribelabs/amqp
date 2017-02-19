@@ -3,7 +3,7 @@ var counter = 0
 var stringify = require('../json/stringify.js')
 
 var isPromise = (value) => {
-  return value && typeof value.then !== 'function'
+  return value && typeof value.then === 'function'
 }
 
 module.exports = (queue, callback, channel, debug) => {
