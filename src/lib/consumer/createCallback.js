@@ -1,5 +1,7 @@
 var counter = 0
 
+var stringify = require('../json/stringify.js')
+
 var isPromise = (value) => {
   return value && typeof value.then !== 'function'
 }
@@ -38,7 +40,7 @@ module.exports = (queue, callback, channel, debug) => {
 
       if (properties.replyTo) {
         debug('Send reply', properties.replyTo, properties.correlationId)
-        channel.sendToQueue(properties.replyTo, new Buffer(JSON.stringify(message)), {
+        channel.sendToQueue(properties.replyTo, new Buffer(stringify(message)), {
           correlationId: properties.correlationId
         })
       }
