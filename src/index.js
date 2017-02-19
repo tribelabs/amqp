@@ -2,9 +2,12 @@ var amqp = require('amqplib')
 
 var middleware = require('./middleware.js')
 var publish = require('./lib/publish.js')
+var publishIntoExchange = require('./lib/publishIntoExchange.js')
 var consume = require('./lib/consume.js')
+var consumeExchange = require('./lib/consumeExchange.js')
 var storage = require('./lib/storage.js')
 var createQueue = require('./lib/createQueue.js')
+var createExchange = require('./lib/createExchange.js')
 
 var _config = null
 
@@ -79,7 +82,9 @@ var service = {
   onClose: addListener(onClose),
   onError: addListener(onError),
   publish: publish(createQueue(storage.namespace('publishers'), connect, debug), debug),
-  consume: consume(createQueue(storage.namespace('consumers'), connect, debug), debug)
+  publishIntoExchange: publishIntoExchange(createExchange(storage.namespace('exchangePublishers'), connect, debug), debug),
+  consume: consume(createQueue(storage.namespace('consumers'), connect, debug), debug),
+  consumeExchange: consumeExchange(createExchange(storage.namespace('exchangeConsumers'), connect, debug), debug)
 }
 
 var rabbit = (config) => {

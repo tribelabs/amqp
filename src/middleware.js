@@ -2,7 +2,9 @@ module.exports = (rabbit) => {
   return (req, res, next) => {
     req.amqp = {
       publish: rabbit.publish,
-      consume: rabbit.consume
+      publishIntoExchange: rabbit.publishIntoExchange,
+      consume: rabbit.consume,
+      consumeExchange: rabbit.consumeExchange
     }
 
     next()

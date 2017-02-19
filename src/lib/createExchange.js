@@ -1,24 +1,23 @@
 var createChannel = require('./createChannel.js')
 
 module.exports = (storage, connect, debug) => {
-  var createQueue = (queue) => {
-    var channel = storage(queue)
+  return (name, type, opts) => {
+    opts = Object.assign({
+      durable: false
+    }, opts || {})
 
+    var channel = storage(name)
     if (!channel) {
-      debug('Create channel queue for', queue)
       channel = createChannel(connect)
       .then((channel) => {
-        return channel.assertQueue(queue)
+        return channel.assertExchange(name, type || 'fanout', opts)
         .then(() => {
           return channel
         })
       })
-
       storage.set(channel)
     }
 
     return channel
   }
-
-  return createQueue
 }

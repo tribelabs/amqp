@@ -5,7 +5,7 @@ var defaults = {
   autoDeleteCallback: false
 }
 
-module.exports = (createChannel, debug) => {
+module.exports = (createQueue, debug) => {
   var maybeAnswer = (channel, corrId, callback, autoDelete) => {
     return (msg) => {
       if (msg.properties.correlationId === corrId) {
@@ -27,7 +27,7 @@ module.exports = (createChannel, debug) => {
     debug('Should be published', queue, message, opts)
 
     return new Promise(function (resolve, reject) {
-      createChannel(queue)
+      createQueue(queue)
       .then((channel) => {
         var corrId = uuid()
 
