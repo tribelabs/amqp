@@ -17,7 +17,8 @@ var connect = () => {
     connection = new Promise((resolve, reject) => {
       debug('Create new rabbit connection', _config)
 
-      amqp.connect(_config.connection)
+      amqp
+      .connect(_config.connection)
       .then((model) => {
         model.on('close', () => {
           debug('"Close" event emitted, emitting callbacks:', onClose.length)
@@ -82,6 +83,9 @@ var emitListeners = (callbacks, args) => {
 
 var service = {
   connect: connect,
+  isConnected: () => {
+    return !!connection
+  },
   onClose: addListener(onClose),
   onError: addListener(onError),
   publish: publish(createQueue(storage.namespace('publishers'), connect, debug), debug),
