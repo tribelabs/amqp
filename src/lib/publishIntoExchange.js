@@ -1,3 +1,5 @@
+var uuid = require('uuid')
+
 var validateMessageToPublish = require('./validator/validateMessageToPublish.js')
 
 module.exports = (createExchange, debug) => {
@@ -10,6 +12,7 @@ module.exports = (createExchange, debug) => {
       message = validateMessageToPublish(message)
 
       return channel.publish(name, '', message, {
+        correlationId: uuid(),
         timestamp: Date.now()
       })
     })
