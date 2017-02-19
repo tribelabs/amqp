@@ -21,11 +21,13 @@ var connect = () => {
       .then((model) => {
         model.on('close', () => {
           debug('"Close" event emitted, emitting callbacks:', onClose.length)
+          connection = null
           emitListeners(onClose, [model])
         })
 
         model.on('error', (error) => {
           debug('"Error" event emitted, emitting callbacks:', onError.length)
+          connection = null
           emitListeners(onError, [error, model])
         })
 
