@@ -21,7 +21,7 @@ module.exports = (createQueue, debug) => {
       })
       .then((channel) => {
         return channel.consume(queue, createCallback(queue, callback, channel, debug), {
-          noAct: false
+          noAck: false
         })
       })
       .then((result) => {
