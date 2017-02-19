@@ -1,4 +1,4 @@
-var createChannel = require('./createChannel.js')
+var create = require('./channel/create.js')
 
 module.exports = (storage, connect, debug) => {
   var createQueue = (queue) => {
@@ -6,7 +6,7 @@ module.exports = (storage, connect, debug) => {
 
     if (!channel) {
       debug('Create channel queue for', queue)
-      channel = createChannel(connect)
+      channel = create(connect)
       .then((channel) => {
         return channel.assertQueue(queue)
         .then(() => {

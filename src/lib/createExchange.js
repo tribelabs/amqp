@@ -1,4 +1,4 @@
-var createChannel = require('./createChannel.js')
+var create = require('./channel/create.js')
 
 module.exports = (storage, connect, debug) => {
   return (name, type, opts) => {
@@ -8,7 +8,7 @@ module.exports = (storage, connect, debug) => {
 
     var channel = storage(name)
     if (!channel) {
-      channel = createChannel(connect)
+      channel = create(connect)
       .then((channel) => {
         return channel.assertExchange(name, type || 'fanout', opts)
         .then(() => {
