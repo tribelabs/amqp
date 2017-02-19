@@ -6,8 +6,8 @@ module.exports = (createExchange, debug) => {
 
     return createExchange(name)
     .then((channel) => {
-      message = validateMessageToPublish(message)
       debug('publish into exchange', name, message)
+      message = validateMessageToPublish(message)
 
       return channel.publish(name, '', message, {
         timestamp: Date.now()

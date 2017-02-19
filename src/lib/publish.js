@@ -58,8 +58,8 @@ module.exports = (createQueue, debug) => {
         }
       })
       .then((results) => {
-        message = validateMessageToPublish(message)
         debug('Publish', queue, message)
+        message = validateMessageToPublish(message)
 
         return results.channel.sendToQueue(queue, message, {
           correlationId: results.correlationId,
