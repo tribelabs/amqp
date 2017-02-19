@@ -1,5 +1,9 @@
 var counter = 0
 
+var isPromise = (value) => {
+  return value && typeof value.then !== 'function'
+}
+
 module.exports = (queue, callback, channel, debug) => {
   return (msg) => {
     if (msg === null) {
@@ -25,16 +29,7 @@ module.exports = (queue, callback, channel, debug) => {
       }
     }
 
-    if (!result) {
-      result = Promise.resolve(null)
-    }
-
-    if (result && typeof result.then !== 'function') {
-      result = Promise.resolve(result)
-    }
-
-    result
-    .then((message) => {
+    var finish = (message) => {
       if (timeLabel) {
         console.timeEnd(timeLabel)
       }
@@ -49,10 +44,19 @@ module.exports = (queue, callback, channel, debug) => {
       }
 
       channel.ack(msg)
-    })
-    .catch((error) => {
-      console.warn('Consume promise error', error)
-      channel.ack(msg)
-    })
+    }
+
+    if (isPromise(result)) {
+      result
+      .then((message) => {
+        finish(message)
+      })
+      .catch((error) => {
+        console.warn('Consume promise error', error)
+        channel.ack(msg)
+      })
+    } else {
+      finish(result)
+    }
   }
 }
