@@ -79,6 +79,7 @@ var emitListeners = (callbacks, args) => {
 }
 
 var service = {
+  connect: connect,
   onClose: addListener(onClose),
   onError: addListener(onError),
   publish: publish(createQueue(storage.namespace('publishers'), connect, debug), debug),
