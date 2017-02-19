@@ -1,4 +1,4 @@
-var uuid = require('uuid')
+var uuid = require('node-uuid')
 
 var validateMessageToPublish = require('./validator/validateMessageToPublish.js')
 
