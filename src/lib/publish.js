@@ -1,5 +1,6 @@
 var uuid = require('node-uuid')
-var isNil = require('is-nil')
+
+var validateMessageToPublish = require('./validator/validateMessageToPublish.js')
 
 var defaults = {
   autoDeleteCallback: false
@@ -57,13 +58,8 @@ module.exports = (createQueue, debug) => {
         }
       })
       .then((results) => {
+        message = validateMessageToPublish(message)
         debug('Publish', queue, message)
-
-        if (isNil(message)) {
-          message = new Buffer(JSON.stringify({}))
-        } else {
-          message = new Buffer(JSON.stringify(message))
-        }
 
         return results.channel.sendToQueue(queue, message, {
           correlationId: results.correlationId,

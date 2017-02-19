@@ -1,4 +1,4 @@
-var isNil = require('is-nil')
+var validateMessageToPublish = require('./validator/validateMessageToPublish.js')
 
 module.exports = (createExchange, debug) => {
   return (name, message) => {
@@ -6,13 +6,8 @@ module.exports = (createExchange, debug) => {
 
     return createExchange(name)
     .then((channel) => {
+      message = validateMessageToPublish(message)
       debug('publish into exchange', name, message)
-
-      if (isNil(message)) {
-        message = new Buffer(JSON.stringify({}))
-      } else {
-        message = new Buffer(JSON.stringify(message))
-      }
 
       return channel.publish(name, '', message, {
         timestamp: Date.now()
