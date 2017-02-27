@@ -15,6 +15,12 @@ var service = {
 
   namespace: (namespace) => {
     return namespacedServiceBuilder(namespace)
+  },
+
+  clear: () => {
+    Object.keys(storage).map((namespace) => {
+      storage[namespace] = {}
+    })
   }
 }
 
