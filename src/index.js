@@ -61,9 +61,9 @@ debug.isAllowed = () => {
 var onClose = []
 var onError = []
 
-var addListener = (storage) => {
-  if (!Array.isArray(storage)) {
-    throw new Error('Listeners storage has to be array')
+var addListener = (listeners) => {
+  if (!Array.isArray(listeners)) {
+    throw new Error('Listeners listeners has to be array')
   }
 
   return (callback) => {
@@ -71,7 +71,9 @@ var addListener = (storage) => {
       throw new Error('Callback has to be function')
     }
 
-    storage.push(callback)
+    console.log('add listener', callback)
+
+    listeners.push(callback)
   }
 }
 
