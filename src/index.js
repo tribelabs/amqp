@@ -71,8 +71,6 @@ var addListener = (listeners) => {
       throw new Error('Callback has to be function')
     }
 
-    console.log('add listener', callback)
-
     listeners.push(callback)
   }
 }
