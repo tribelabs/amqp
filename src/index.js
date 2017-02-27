@@ -108,6 +108,13 @@ var rabbit = (config) => {
   return service
 }
 
+var clear = () => {
+  storage.clear()
+}
+
+service.onError(clear)
+service.onClose(clear)
+
 rabbit.middleware = (config) => {
   return middleware(rabbit(config))
 }
