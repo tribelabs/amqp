@@ -12,6 +12,8 @@ var createExchange = require('./lib/createExchange.js')
 var _config = null
 
 var connection = null
+var connected = false
+
 var connect = () => {
   if (!connection) {
     connection = new Promise((resolve, reject) => {
@@ -20,15 +22,19 @@ var connect = () => {
       amqp
       .connect(_config.connection)
       .then((model) => {
+        connected = true
+
         model.on('close', () => {
           debug('"Close" event emitted, emitting callbacks:', onClose.length)
           connection = null
+          connected = false
           emitListeners(onClose, [model])
         })
 
         model.on('error', (error) => {
           debug('"Error" event emitted, emitting callbacks:', onError.length)
           connection = null
+          connected = false
           emitListeners(onError, [error, model])
         })
 
@@ -84,7 +90,7 @@ var emitListeners = (callbacks, args) => {
 var service = {
   connect: connect,
   isConnected: () => {
-    return !!connection
+    return connected
   },
   onClose: addListener(onClose),
   onError: addListener(onError),
