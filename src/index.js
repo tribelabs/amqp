@@ -9,6 +9,13 @@ var storage = require('./lib/storage.js')
 var createQueue = require('./lib/createQueue.js')
 var createExchange = require('./lib/createExchange.js')
 
+var warn = (message, error) => {
+  console.warn(message, error)
+  if (error && error.stack) {
+    console.log(error.stack)
+  }
+}
+
 var _config = null
 
 var connection = null
@@ -44,10 +51,7 @@ var connect = () => {
         connection = null
         connected = false
 
-        console.warn('AMQP connect failed', error)
-        if (error && error.stack) {
-          console.log(error.stack)
-        }
+        warn('AMQP connect failed', error)
 
         reject(error)
       })
@@ -98,10 +102,7 @@ var emitListeners = (callbacks, args) => {
       callback.apply(callback, args)
     })
   } catch (e) {
-    console.log('Error in listeners spotted', e.stack)
-    if (e && e.stack) {
-      console.warn(e.stack)
-    }
+    warn('Error in listeners spotted', e)
   }
 }
 
