@@ -119,8 +119,28 @@ var clear = () => {
   storage.clear()
 }
 
+var reconnectTimeout = () => {
+  setTimeout(() => {
+    connect()
+    .then(() => {
+      if (!connected) { // should not be the case, but...
+        reconnectTimeout()
+      }
+    })
+    .catch(() => {
+      reconnectTimeout()
+    })
+  }, 5000)
+}
+
+var reconnect = () => {
+  reconnectTimeout()
+}
+
 service.onError(clear)
 service.onClose(clear)
+service.onError(reconnect)
+service.onClose(reconnect)
 
 rabbit.middleware = (config) => {
   return middleware(rabbit(config))
