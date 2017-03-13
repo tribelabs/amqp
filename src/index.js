@@ -148,10 +148,8 @@ var reconnect = () => {
   reconnectTimeout()
 }
 
-service.onError(clear)
-service.onClose(clear)
-service.onError(reconnect)
-service.onClose(reconnect)
+service.onError([clear, reconnect])
+service.onClose([clear, reconnect])
 
 rabbit.middleware = (config) => {
   return middleware(rabbit(config))
