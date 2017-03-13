@@ -119,13 +119,16 @@ var clear = () => {
   storage.clear()
 }
 
+var timeoutId = null
 var reconnectTimeout = () => {
-  setTimeout(() => {
+  timeoutId = setTimeout(() => {
     connect()
     .then(() => {
       if (!connected) { // should not be the case, but...
         reconnectTimeout()
       }
+
+      clearTimeout(timeoutId)
     })
     .catch(() => {
       reconnectTimeout()
