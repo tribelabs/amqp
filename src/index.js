@@ -142,9 +142,9 @@ var reconnectTimeout = () => {
     .then(() => {
       if (!connected) { // should not be the case, but...
         reconnectTimeout()
+      } else {
+        clearTimeout(timeoutId)
       }
-
-      clearTimeout(timeoutId)
     })
     .catch(() => {
       reconnectTimeout()
