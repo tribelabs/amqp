@@ -93,9 +93,16 @@ var addListener = (listeners) => {
 }
 
 var emitListeners = (callbacks, args) => {
-  callbacks.map((callback) => {
-    callback.apply(callback, args)
-  })
+  try {
+    callbacks.map((callback) => {
+      callback.apply(callback, args)
+    })
+  } catch (e) {
+    console.log('Error in listeners spotted', e.stack)
+    if (e && e.stack) {
+      console.warn(e.stack)
+    }
+  }
 }
 
 var service = {
