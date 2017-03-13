@@ -75,12 +75,20 @@ var addListener = (listeners) => {
     throw new Error('Listeners listeners has to be array')
   }
 
-  return (callback) => {
-    if (typeof callback !== 'function') {
-      throw new Error('Callback has to be function')
-    }
+  return (callbacks) => {
+    if (callbacks) {
+      if (!Array.isArray(callbacks)) {
+        callbacks = [callbacks]
+      }
 
-    listeners.push(callback)
+      callbacks.map((callback) => {
+        if (typeof callback !== 'function') {
+          throw new Error('Callback has to be function')
+        }
+
+        listeners.push(callback) // would rather use .concat but later...
+      })
+    }
   }
 }
 
