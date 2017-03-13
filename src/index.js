@@ -41,6 +41,9 @@ var connect = () => {
         resolve(model)
       })
       .catch((error) => {
+        connection = null
+        connected = false
+
         console.warn('AMQP connect failed', error)
         if (error && error.stack) {
           console.log(error.stack)
