@@ -15,7 +15,7 @@ module.exports = (storage, connect, debug) => {
           })
         })
         .catch((error) => {
-          debug('Error in creating of channel, unset it', error)
+          debug('Error in creating of queue channel, unset it', error)
           storage.unset()
           reject(error)
         })
