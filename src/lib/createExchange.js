@@ -8,13 +8,21 @@ module.exports = (storage, connect, debug) => {
 
     var channel = storage(name)
     if (!channel) {
-      channel = create(connect)
-      .then((channel) => {
-        return channel.assertExchange(name, type || 'fanout', opts)
-        .then(() => {
-          return channel
+      channel = new Promise((resolve, reject) => {
+        create(connect)
+        .then((ch) => {
+          return ch.assertExchange(name, type || 'fanout', opts)
+          .then(() => {
+            resolve(ch)
+          })
+        })
+        .catch((error) => {
+          debug('Error in creating of channel, unset it', error)
+          storage.unset()
+          reject(error)
         })
       })
+
       storage.set(channel)
     }
 
