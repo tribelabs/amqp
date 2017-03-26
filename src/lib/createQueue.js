@@ -6,11 +6,18 @@ module.exports = (storage, connect, debug) => {
 
     if (!channel) {
       debug('Create channel queue for', queue)
-      channel = create(connect)
-      .then((channel) => {
-        return channel.assertQueue(queue, opts || {})
-        .then(() => {
-          return channel
+      channel = new Promise((resolve, reject) => {
+        create(connect)
+        .then((ch) => {
+          return ch.assertQueue(queue, opts || {})
+          .then(() => {
+            resolve(ch)
+          })
+        })
+        .catch((error) => {
+          debug('Error in creating of channel, unset it', error)
+          storage.unset()
+          reject(error)
         })
       })
 
