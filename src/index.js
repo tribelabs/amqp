@@ -3,8 +3,8 @@ var amqp = require('amqplib')
 var middleware = require('./middleware.js')
 var publish = require('./lib/publish.js')
 var publishIntoExchange = require('./lib/publishIntoExchange.js')
-var consume = require('./lib/consume.js')
-var consumeExchange = require('./lib/consumeExchange.js')
+var consumeBuilder = require('./lib/consume.js')
+var consumeExchangeBuilder = require('./lib/consumeExchange.js')
 var storage = require('./lib/storage.js')
 var createQueue = require('./lib/createQueue.js')
 var createExchange = require('./lib/createExchange.js')
@@ -20,6 +20,7 @@ var _config = null
 
 var connection = null
 var connected = false
+var reconnection = false
 
 var connect = () => {
   if (!connection) {
@@ -35,6 +36,7 @@ var connect = () => {
           debug('"Close" event emitted, emitting callbacks:', onClose.length)
           connection = null
           connected = false
+          reconnection = true
           emitListeners(onClose, [model])
         })
 
@@ -42,8 +44,20 @@ var connect = () => {
           debug('"Error" event emitted, emitting callbacks:', onError.length)
           connection = null
           connected = false
+          reconnection = true
           emitListeners(onError, [error, model])
         })
+
+        if (reconnection) {
+          debug('Reconnecting..., add consumers')
+          consumers.map((args) => {
+            consume.apply(null, args)
+          })
+
+          exchangeConsumers.map(function (args) {
+            consumeExchange.apply(null, args)
+          })
+        }
 
         resolve(model)
       })
@@ -106,6 +120,23 @@ var emitListeners = (callbacks, args) => {
   }
 }
 
+var consume = consumeBuilder(createQueue(storage.namespace('consumers'), connect, debug), debug)
+var consumeExchange = consumeExchangeBuilder(createExchange(storage.namespace('exchangeConsumers'), connect, debug), debug)
+
+var consumers = []
+var consumeWrapper = function () {
+  var args = arguments
+  consumers.push(args)
+  return consume.apply(null, args)
+}
+
+var exchangeConsumers = []
+var exchangeWrapper = function () {
+  var args = arguments
+  exchangeConsumers.push(args)
+  return consumeExchange.apply(null, args)
+}
+
 var service = {
   connect: connect,
   isConnected: () => {
@@ -115,8 +146,8 @@ var service = {
   onError: addListener(onError),
   publish: publish(createQueue(storage.namespace('publishers'), connect, debug), debug),
   publishIntoExchange: publishIntoExchange(createExchange(storage.namespace('exchangePublishers'), connect, debug), debug),
-  consume: consume(createQueue(storage.namespace('consumers'), connect, debug), debug),
-  consumeExchange: consumeExchange(createExchange(storage.namespace('exchangeConsumers'), connect, debug), debug)
+  consume: consumeWrapper,
+  consumeExchange: exchangeWrapper
 }
 
 var rabbit = (config) => {
