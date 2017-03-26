@@ -36,6 +36,11 @@ var namespacedServiceBuilder = (namespace) => {
     return namespacedService
   }
 
+  namespacedService.unset = () => {
+    delete storage[namespace][_name]
+    return namespacedService
+  }
+
   return namespacedService
 }
 
