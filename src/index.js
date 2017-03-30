@@ -9,6 +9,14 @@ var storage = require('./lib/storage.js')
 var createQueue = require('./lib/createQueue.js')
 var createExchange = require('./lib/createExchange.js')
 
+var instanceOfString = (arg) => {
+  return typeof arg === 'string'
+}
+
+var instanceofError = (arg) => {
+  return arg instanceof Error
+}
+
 var warn = (message, error) => {
   console.warn(message, error)
   if (error && error.stack) {
@@ -76,13 +84,35 @@ var connect = () => {
 }
 
 var debug = function () {
-  if (_config.debug === true) {
-    console.log.apply(null, arguments)
+  var mode = debug.mode()
+  if (arguments.length) {
+    if (mode === 'all') {
+      console.log.apply(null, arguments)
+    } else if (mode === 'tiny') {
+      var args = Array.prototype.filter.call(arguments, (arg) => {
+        return instanceOfString(arg) || instanceofError(arg)
+      })
+      console.log.apply(null, args)
+    }
   }
 }
 
+debug.mode = () => {
+  var mode = (_config || {}).debug
+
+  if (mode === true) {
+    mode = 'all'
+  }
+
+  if (!mode || ['all', 'tiny'].indexOf(mode) === -1) {
+    mode = false
+  }
+
+  return mode
+}
+
 debug.isAllowed = () => {
-  return (_config || {}).debug
+  return !!debug.mode()
 }
 
 var onClose = []
