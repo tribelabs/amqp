@@ -17,7 +17,7 @@ module.exports = (createExchange, debug) => {
       })
     })
     .catch((error) => {
-      console.warn('Publish into exchange error', error)
+      debug('Publish into exchange error', error)
       return error
     })
   }

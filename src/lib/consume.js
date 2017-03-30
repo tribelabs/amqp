@@ -28,7 +28,7 @@ module.exports = (createQueue, debug) => {
         resolve(result)
       })
       .catch((error) => {
-        console.warn('Creating of consumer failed', error)
+        debug('Creating of consumer failed', error)
         reject(error)
       })
     })

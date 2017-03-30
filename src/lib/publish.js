@@ -69,7 +69,7 @@ module.exports = (createQueue, debug) => {
       })
       .then(resolve)
       .catch((error) => {
-        console.warn('Publish error', error)
+        debug('Publish error', error)
         reject(error)
       })
     })
