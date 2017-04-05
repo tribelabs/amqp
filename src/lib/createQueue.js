@@ -1,7 +1,7 @@
 var create = require('./channel/create.js')
 
 module.exports = (storage, connect, debug) => {
-  var createQueue = (queue, opts) => {
+  return (queue, opts) => {
     var channel = storage(queue)
 
     if (!channel) {
@@ -26,6 +26,4 @@ module.exports = (storage, connect, debug) => {
 
     return channel
   }
-
-  return createQueue
 }
