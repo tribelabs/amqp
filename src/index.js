@@ -85,14 +85,16 @@ var connect = () => {
 
 var debug = function () {
   var mode = debug.mode()
-  if (arguments.length) {
+  var args = ['[AMQP]'].concat(...arguments)
+
+  if (args.length) {
     if (mode === 'all') {
-      console.log.apply(null, arguments)
+      console.log(...args)
     } else if (mode === 'tiny') {
-      var args = Array.prototype.filter.call(arguments, (arg) => {
+      args = args.filter((arg) => {
         return instanceOfString(arg) || instanceofError(arg)
       })
-      console.log.apply(null, args)
+      console.log(...args)
     }
   }
 }
