@@ -1,5 +1,6 @@
 var createCallback = require('./consumer/createCallback.js')
 var prefetch = require('./channel/prefetch.js')
+var buildConsumeCallback = require('./utils/buildConsumeCallback.js')
 
 var defaults = {
   prefetch: false
@@ -9,6 +10,10 @@ module.exports = (createQueue, debug) => {
   return (queue, callback, opts) => {
     debug('Add consumer for', queue)
     opts = Object.assign({}, defaults, opts)
+
+    if (Array.isArray(callback)) {
+      callback = buildConsumeCallback(queue, callback)
+    }
 
     return new Promise((resolve, reject) => {
       createQueue(queue)

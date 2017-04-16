@@ -9,7 +9,9 @@
   "dependencies": {
     "amqplib": "^0.4.1",
     "is-nil": "1.0.1",
-    "node-uuid": "^1.4.7"
+    "node-uuid": "^1.4.7",
+    "lasync": "1.1.0",
+    "node-apply": "1.0.0",
   },
   "repository": {
     "type": "git",

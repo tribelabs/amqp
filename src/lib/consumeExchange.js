@@ -1,5 +1,6 @@
 var createCallback = require('./consumer/createCallback.js')
 var prefetch = require('./channel/prefetch.js')
+var buildConsumeCallback = require('./utils/buildConsumeCallback.js')
 
 var defaults = {
   prefetch: false
@@ -9,6 +10,10 @@ module.exports = (createExchange, debug) => {
   return (name, callback, opts) => {
     debug('Add exchange consumer for', name)
     opts = Object.assign({}, defaults, opts)
+
+    if (Array.isArray(callback)) {
+      callback = buildConsumeCallback(name, callback)
+    }
 
     return createExchange(name)
     .then((channel) => {
