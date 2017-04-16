@@ -12,7 +12,7 @@ module.exports = (createExchange, debug) => {
     opts = Object.assign({}, defaults, opts)
 
     if (Array.isArray(callback)) {
-      callback = buildConsumeCallback(name, callback)
+      callback = buildConsumeCallback(name, callback, debug)
     }
 
     return createExchange(name)

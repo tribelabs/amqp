@@ -12,7 +12,7 @@ module.exports = (createQueue, debug) => {
     opts = Object.assign({}, defaults, opts)
 
     if (Array.isArray(callback)) {
-      callback = buildConsumeCallback(queue, callback)
+      callback = buildConsumeCallback(queue, callback, debug)
     }
 
     return new Promise((resolve, reject) => {
