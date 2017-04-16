@@ -36,7 +36,7 @@ module.exports = (queue, callback, channel, debug) => {
         console.timeEnd(timeLabel)
       }
 
-      debug('Task', queue, 'finished, with message', message, 'took:', (Date.now() - properties.timestamp) / 1000)
+      debug('Task', queue, 'finished, with message:', message, ', took:', (Date.now() - properties.timestamp) / 1000)
 
       if (properties.replyTo) {
         debug('Send reply', properties.replyTo, properties.correlationId)
@@ -50,9 +50,7 @@ module.exports = (queue, callback, channel, debug) => {
 
     if (isPromise(result)) {
       result
-      .then((message) => {
-        finish(message)
-      })
+      .then(finish)
       .catch((error) => {
         console.warn('Consume promise error', error)
         channel.ack(msg)
