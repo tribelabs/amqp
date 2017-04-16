@@ -9,20 +9,9 @@ var storage = require('./lib/storage.js')
 var createQueue = require('./lib/createQueue.js')
 var createExchange = require('./lib/createExchange.js')
 
-var instanceOfString = (arg) => {
-  return typeof arg === 'string'
-}
-
-var instanceofError = (arg) => {
-  return arg instanceof Error
-}
-
-var warn = (message, error) => {
-  console.warn(message, error)
-  if (error && error.stack) {
-    console.log(error.stack)
-  }
-}
+var warn = require('./lib/utils/warn.js')
+var instanceOfString = require('./lib/utils/instanceOfString.js')
+var instanceofError = require('./lib/utils/instanceofError.js')
 
 var _config = null
 
