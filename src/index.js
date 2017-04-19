@@ -8,6 +8,7 @@ var consumeExchangeBuilder = require('./lib/consumeExchange.js')
 var storage = require('./lib/storage.js')
 var createQueue = require('./lib/createQueue.js')
 var createExchange = require('./lib/createExchange.js')
+var map = require('./lib/map.js')
 
 var warn = require('./lib/utils/warn.js')
 var instanceOfString = require('./lib/utils/instanceOfString.js')
@@ -168,7 +169,8 @@ var service = {
   publish: publish(createQueue(storage.namespace('publishers'), connect, debug), debug),
   publishIntoExchange: publishIntoExchange(createExchange(storage.namespace('exchangePublishers'), connect, debug), debug),
   consume: consumeWrapper,
-  consumeExchange: exchangeWrapper
+  consumeExchange: exchangeWrapper,
+  map: map
 }
 
 var rabbit = (config) => {
