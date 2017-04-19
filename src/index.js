@@ -148,14 +148,14 @@ var consumers = []
 var consumeWrapper = function () {
   var args = arguments
   consumers.push(args)
-  return consume.apply(null, args)
+  return consume(...args)
 }
 
 var exchangeConsumers = []
 var exchangeWrapper = function () {
   var args = arguments
   exchangeConsumers.push(args)
-  return consumeExchange.apply(null, args)
+  return consumeExchange(...args)
 }
 
 var service = {
