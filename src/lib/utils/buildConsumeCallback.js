@@ -1,6 +1,14 @@
 var lasync = require('lasync')
 var apply = require('node-apply')
 
+var log = (error) => {
+  if (error instanceof Error) {
+    return console.warn
+  }
+
+  return console.log
+}
+
 module.exports = (queue, callbacks, debug) => {
   return function () {
     var args = arguments
@@ -12,9 +20,9 @@ module.exports = (queue, callbacks, debug) => {
         return apply(callback, ...args)
       }), (error, result) => {
         if (error) {
-          console.warn('Error occurred in queue "' + queue + '" middleware:', error)
+          log(error)('Error occurred in queue "' + queue + '" middleware:', error)
           if (error.stack) {
-            console.warn(error.stack)
+            log(error)(error.stack)
           }
         }
 
