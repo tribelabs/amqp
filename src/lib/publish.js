@@ -25,7 +25,7 @@ module.exports = (createQueue, debug) => {
     opts = Object.assign({}, defaults, (opts || {}))
     var listenForReply = typeof callback === 'function'
 
-    debug('Should be published', queue, message, opts)
+    debug('Should be published', queue)
 
     return new Promise(function (resolve, reject) {
       createQueue(queue)
@@ -58,7 +58,7 @@ module.exports = (createQueue, debug) => {
         }
       })
       .then((results) => {
-        debug('Publish', queue, message)
+        debug('Publish', queue, message, opts)
         message = validateMessageToPublish(message)
 
         return results.channel.sendToQueue(queue, message, {
