@@ -6,6 +6,31 @@ var defaults = {
   autoDeleteCallback: false
 }
 
+var parseArgs = (args) => {
+  var queue = args.shift()
+  var message = args.shift()
+  var callback = null
+  var opts = null
+
+  if (args.length === 2) {
+    callback = args.shift()
+    opts = args.shift()
+  } else if (args.length === 1) {
+    if (typeof args[0] !== 'function') {
+      opts = args.shift()
+    } else {
+      callback = args.shift()
+    }
+  }
+
+  return {
+    queue,
+    message,
+    callback,
+    opts
+  }
+}
+
 module.exports = (createQueue, debug) => {
   var maybeAnswer = (channel, corrId, callback, autoDelete) => {
     return (msg) => {
@@ -55,7 +80,9 @@ module.exports = (createQueue, debug) => {
     })
   }
 
-  return function (queue, message, callback, opts) {
+  return function (...args) { // queue, message, callback, opts
+    var { queue, message, callback, opts } = parseArgs(args)
+
     opts = Object.assign({}, defaults, (opts || {}))
 
     debug('Should be published', queue)
