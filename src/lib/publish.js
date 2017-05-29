@@ -3,7 +3,8 @@ var uuid = require('uuid')
 var validateMessageToPublish = require('./validator/validateMessageToPublish.js')
 
 var defaults = {
-  autoDeleteCallback: false
+  autoDeleteCallback: false,
+  delay: 0
 }
 
 var parseArgs = (args) => {
@@ -80,6 +81,36 @@ module.exports = (createQueue, debug) => {
     })
   }
 
+  var publish = (channel, queue, message, correlationId, replyTo) => {
+    debug('Publish', queue, message)
+
+    message = validateMessageToPublish(message)
+
+    return channel.sendToQueue(queue, message, {
+      correlationId: correlationId,
+      replyTo: replyTo,
+      timestamp: Date.now()
+    })
+  }
+
+  var publishIfNeeded = (queue, message, results, delay) => {
+    delay = +delay
+    var callback = () => {
+      return publish(results.channel, queue, message, results.correlationId, results.replyTo)
+    }
+
+    return new Promise((resolve, reject) => {
+      if (delay) {
+        debug('Delaying publish of', queue, 'about', delay)
+        setTimeout(() => {
+          resolve(callback())
+        }, delay)
+      } else {
+        resolve(callback())
+      }
+    })
+  }
+
   return function (...args) { // queue, message, callback, opts
     var { queue, message, callback, opts } = parseArgs(args)
 
@@ -93,14 +124,7 @@ module.exports = (createQueue, debug) => {
         return createQueueForAnswerIfNeed(channel, callback, opts)
       })
       .then((results) => {
-        debug('Publish', queue, message, opts)
-        message = validateMessageToPublish(message)
-
-        return results.channel.sendToQueue(queue, message, {
-          correlationId: results.correlationId,
-          replyTo: results.replyTo,
-          timestamp: Date.now()
-        })
+        return publishIfNeeded(queue, message, results, opts.delay)
       })
       .then(resolve)
       .catch((error) => {
