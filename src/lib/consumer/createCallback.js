@@ -40,7 +40,8 @@ module.exports = (queue, callback, channel, debug) => {
 
       if (properties.replyTo) {
         debug('Send reply', properties.replyTo, properties.correlationId)
-        channel.sendToQueue(properties.replyTo, new Buffer(stringify(message)), {
+        var response = stringify(message) || ''
+        channel.sendToQueue(properties.replyTo, new Buffer(response), {
           correlationId: properties.correlationId
         })
       }
