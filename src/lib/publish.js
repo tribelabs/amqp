@@ -1,6 +1,7 @@
 var uuid = require('uuid')
 
 var validateMessageToPublish = require('./validator/validateMessageToPublish.js')
+var parse = require('./json/parse.js')
 
 var defaults = {
   autoDeleteCallback: false,
@@ -36,7 +37,7 @@ module.exports = (createQueue, debug) => {
   var maybeAnswer = (channel, corrId, callback, autoDelete) => {
     return (msg) => {
       if (msg.properties.correlationId === corrId) {
-        callback(JSON.parse(msg.content.toString()))
+        callback(parse(msg.content.toString()))
         channel.ack(msg)
 
         if (autoDelete === true) {

@@ -1,6 +1,7 @@
 var counter = 0
 
 var stringify = require('../json/stringify.js')
+var parse = require('../json/parse.js')
 
 var isPromise = (value) => {
   return value && typeof value.then === 'function'
@@ -23,7 +24,7 @@ module.exports = (queue, callback, channel, debug) => {
 
     var result = null
     try {
-      result = callback(JSON.parse(msg.content ? msg.content.toString() : msg.toString()))
+      result = callback(parse(msg.content ? msg.content.toString() : msg.toString()))
     } catch (e) {
       console.warn('Consume error', e)
       if (e && e.stack) {
