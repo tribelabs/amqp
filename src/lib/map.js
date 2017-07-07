@@ -2,8 +2,6 @@ var isPlainObject = require('is-plain-obj')
 var isCallable = require('is-callable')
 
 var map = function (consumers) {
-  var self = this
-
   if (isPlainObject(consumers)) {
     consumers = Object.keys(consumers).map((name) => {
       var value = consumers[name]
@@ -35,10 +33,10 @@ var map = function (consumers) {
   if (Array.isArray(consumers)) {
     return consumers.map((def) => {
       if (def.type === 'exchange') {
-        return self.consumeExchange(def.name, def.consumer, def.opts)
+        return this.consumeExchange(def.name, def.consumer, def.opts)
       }
 
-      return self.consume(def.name, def.consumer, def.opts)
+      return this.consume(def.name, def.consumer, def.opts)
     })
   } else {
     throw new Error('Consumers has to be array of plain object')
