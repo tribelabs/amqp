@@ -38,9 +38,9 @@ var map = function (consumers) {
 
       return this.consume(def.name, def.consumer, def.opts)
     })
-  } else {
-    throw new Error('Consumers has to be array of plain object')
   }
+
+  throw new Error('Consumers has to be array of plain object')
 }
 
 module.exports = map
