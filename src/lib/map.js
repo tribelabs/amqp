@@ -3,30 +3,29 @@ var isCallable = require('is-callable')
 
 var map = function (consumers) {
   if (isPlainObject(consumers)) {
-    consumers = Object.keys(consumers).map((name) => {
-      var value = consumers[name]
+    var temp = consumers
+    consumers = []
+
+    Object.keys(temp).map((name) => {
+      var value = temp[name]
+      var def = null
+
       if (isPlainObject(value)) {
-        return Object.assign({}, value, {
+        def = Object.assign({}, value, {
           name: name
         })
       }
 
       if (isCallable(value) || Array.isArray(value)) {
-        return Object.assign({
+        def = Object.assign({
           name: name,
           consumer: value
         })
       }
 
-      return null
-    })
-    .filter((value) => {
-      var isOk = !!value
-      if (!isOk) {
-        console.warn('Invalid def of', value)
+      if (def) {
+        consumers.push(def)
       }
-
-      return isOk
     })
   }
 
