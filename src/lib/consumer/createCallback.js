@@ -37,7 +37,12 @@ module.exports = (queue, callback, channel, debug) => {
         console.timeEnd(timeLabel)
       }
 
-      debug('Task', queue, 'finished, with message:', message, ', took:', (Date.now() - properties.timestamp) / 1000)
+      var taskName = queue
+      if (properties.appId) {
+        taskName += ' from ' + properties.appId
+      }
+
+      debug('Task', taskName, 'finished, with message:', message, ', took:', (Date.now() - properties.timestamp) / 1000)
 
       if (properties.replyTo) {
         debug('Send reply', properties.replyTo, properties.correlationId)
