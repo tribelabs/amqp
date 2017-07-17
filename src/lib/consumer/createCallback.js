@@ -1,4 +1,4 @@
-var counter = 0
+var uid = require('uuid')
 
 var stringify = require('../json/stringify.js')
 var parse = require('../json/parse.js')
@@ -18,7 +18,7 @@ module.exports = (queue, callback, channel, debug) => {
     var timeLabel = null
 
     if (debug.isAllowed()) {
-      timeLabel = queue + '_' + (properties.correlationId || counter++)
+      timeLabel = queue + '_' + (properties.correlationId || uid())
       console.time(timeLabel)
     }
 
