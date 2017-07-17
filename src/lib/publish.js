@@ -77,20 +77,21 @@ module.exports = (createQueue, debug) => {
       return {
         channel: channel,
         replyTo: replyChannel,
-        correlationId: corrId
+        correlationId: corrId,
+        appId: debug.connectionName()
       }
     })
   }
 
   var publish = (channel, queue, message, correlationId, replyTo) => {
     debug('Publish', queue, message)
-
     message = validateMessageToPublish(message)
 
     return channel.sendToQueue(queue, message, {
       correlationId: correlationId,
       replyTo: replyTo,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      appId: debug.connectionName()
     })
   }
 

@@ -14,7 +14,8 @@ module.exports = (createExchange, debug) => {
 
         return channel.publish(name, '', message, {
           correlationId: uuid(),
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          appId: debug.connectionName()
         })
       })
       .then(resolve)
