@@ -24,7 +24,7 @@ module.exports = (queue, callback, channel, debug) => {
 
     var result = null
     try {
-      result = callback(parse(msg.content ? msg.content.toString() : msg.toString()))
+      result = callback(parse(msg.content ? msg.content.toString() : msg.toString()), properties)
     } catch (e) {
       console.warn('Consume error', e)
       if (e && e.stack) {
