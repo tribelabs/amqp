@@ -10,12 +10,8 @@ var log = (error) => {
 }
 
 module.exports = (queue, callbacks, debug) => {
-  return function () {
-    var args = arguments
-
+  return (...args) => {
     return new Promise((resolve, reject) => {
-      debug('Running consume callbacks for:', queue, '#' + callbacks.length)
-
       lasync.waterfall(callbacks.map((callback) => {
         return apply(callback, ...args)
       }), (error, result) => {
