@@ -89,6 +89,10 @@ var debug = function () {
   }
 }
 
+debug.connectionName = () => {
+  return (_config || {}).name
+}
+
 debug.mode = () => {
   var mode = (_config || {}).debug
 
