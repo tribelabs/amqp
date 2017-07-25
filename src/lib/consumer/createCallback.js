@@ -32,6 +32,10 @@ module.exports = (queue, callback, channel, debug) => {
       }
     }
 
+    if (!result) {
+      result = Promise.resolve(null)
+    }
+
     var finish = (message) => {
       if (timeLabel) {
         console.timeEnd(timeLabel)
