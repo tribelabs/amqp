@@ -41,16 +41,28 @@ module.exports = (queue, callback, channel, debug) => {
         console.timeEnd(timeLabel)
       }
 
-      var taskName = queue
+      var args = ['Task', queue]
+
       if (properties.appId) {
-        taskName += ' from ' + properties.appId
+        args.push('from ' + properties.appId)
       }
 
-      debug('Task', taskName, 'finished, with message:', message, ', took:', (Date.now() - properties.timestamp) / 1000)
+      args.push('finished')
+
+      if (typeof message !== 'undefined') {
+        args.push(', with message:', message)
+      } else {
+        message = null
+      }
+
+      var diff = (Date.now() - properties.timestamp) / 1000
+      args.push(', took:', diff)
+
+      debug(...args)
 
       if (properties.replyTo) {
         debug('Send reply', properties.replyTo, properties.correlationId)
-        var response = stringify(message || null) || ''
+        var response = stringify(message) || ''
         channel.sendToQueue(properties.replyTo, new Buffer(response), {
           correlationId: properties.correlationId
         })
