@@ -21,52 +21,54 @@ var connected = false
 var reconnection = false
 
 var connect = () => {
+  var clientProperties = { clientProperties: _config.name ? { connection_name: _config.name } : {} }
+
   if (!connection) {
     connection = new Promise((resolve, reject) => {
       debug('Create new rabbit connection', _config)
 
       amqp
-      .connect(_config.connection)
-      .then((model) => {
-        connected = true
+        .connect(_config.connection, clientProperties)
+        .then((model) => {
+          connected = true
 
-        model.on('close', () => {
-          debug('"Close" event emitted, emitting callbacks:', onClose.length)
-          connection = null
-          connected = false
-          reconnection = true
-          emitListeners(onClose, [model])
-        })
-
-        model.on('error', (error) => {
-          debug('"Error" event emitted, emitting callbacks:', onError.length)
-          connection = null
-          connected = false
-          reconnection = true
-          emitListeners(onError, [error, model])
-        })
-
-        if (reconnection) {
-          debug('Reconnecting..., add consumers')
-          consumers.map((args) => {
-            consume.apply(null, args)
+          model.on('close', () => {
+            debug('"Close" event emitted, emitting callbacks:', onClose.length)
+            connection = null
+            connected = false
+            reconnection = true
+            emitListeners(onClose, [model])
           })
 
-          exchangeConsumers.map(function (args) {
-            consumeExchange.apply(null, args)
+          model.on('error', (error) => {
+            debug('"Error" event emitted, emitting callbacks:', onError.length)
+            connection = null
+            connected = false
+            reconnection = true
+            emitListeners(onError, [error, model])
           })
-        }
 
-        resolve(model)
-      })
-      .catch((error) => {
-        connection = null
-        connected = false
+          if (reconnection) {
+            debug('Reconnecting..., add consumers')
+            consumers.map((args) => {
+              consume.apply(null, args)
+            })
 
-        warn('AMQP connect failed', error)
+            exchangeConsumers.map(function (args) {
+              consumeExchange.apply(null, args)
+            })
+          }
 
-        reject(error)
-      })
+          resolve(model)
+        })
+        .catch((error) => {
+          connection = null
+          connected = false
+
+          warn('AMQP connect failed', error)
+
+          reject(error)
+        })
     })
   }
 
@@ -197,16 +199,17 @@ var timeoutId = null
 var reconnectTimeout = () => {
   timeoutId = setTimeout(() => {
     connect()
-    .then(() => {
-      if (!connected) { // should not be the case, but...
+      .then(() => {
+        if (!connected) {
+          // should not be the case, but...
+          reconnectTimeout()
+        } else {
+          clearTimeout(timeoutId)
+        }
+      })
+      .catch(() => {
         reconnectTimeout()
-      } else {
-        clearTimeout(timeoutId)
-      }
-    })
-    .catch(() => {
-      reconnectTimeout()
-    })
+      })
   }, 5000)
 }
 
