@@ -1,13 +1,13 @@
 {
   "name": "tribe-amqp",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "description": "Helpers for working with amqp",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "amqplib": "0.4.1",
+    "amqplib": "0.8.0",
     "is-nil": "1.0.1",
     "lasync": "1.1.0",
     "uuid": "3.0.1",
